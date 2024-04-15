@@ -1,10 +1,15 @@
-import React from "react";
+import React, { FC, ChangeEvent } from "react";
 import "./tabs.scss";
 
-const Tabs = ({ selectedTab, setSelectedTab }) => {
-  const tabs = ["All", "Active", "Completed"];
+interface TabsProps {
+  selectedTab: string;
+  setSelectedTab: (tab: string) => void;
+}
 
-  const handleChange = (event) => {
+const Tabs: FC<TabsProps> = ({ selectedTab, setSelectedTab }) => {
+  const tabs: string[] = ["All", "Active", "Completed"];
+
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedTab(event.target.value);
   };
 

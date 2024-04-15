@@ -1,12 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import Modal from "./modal";
 
-const TodoForm = ({ handleAddTask, task, onEdit, isOpen, setIsOpen }) => {
+interface Todo {
+  id: string;
+  title: string;
+  description: string;
+}
+
+interface TodoFormProps {
+  handleAddTask: (title: string, description: string, taskId: string) => void;
+  task: Todo | null;
+  onEdit: () => void;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+const TodoForm: FC<TodoFormProps> = ({
+  handleAddTask,
+  task,
+  onEdit,
+  isOpen,
+  setIsOpen,
+}) => {
   const [text, setText] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
   const [invalid, setInvalid] = useState(false);
   const [newTask, setNewTask] = useState(task ? false : true);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => {
@@ -17,11 +37,11 @@ const TodoForm = ({ handleAddTask, task, onEdit, isOpen, setIsOpen }) => {
     setIsOpen(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text || text === "UPDATE") {
       setInvalid(true);
-      inputRef.current.focus();
+      inputRef.current?.focus();
       return;
     }
     const taskId = task ? task.id : "";
@@ -36,7 +56,7 @@ const TodoForm = ({ handleAddTask, task, onEdit, isOpen, setIsOpen }) => {
     openModal();
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (name === "task") {
       if (value.length === 0) {
@@ -62,16 +82,11 @@ const TodoForm = ({ handleAddTask, task, onEdit, isOpen, setIsOpen }) => {
     }
   }, [task]);
 
-  const handleEditClick = (task) => {
-    setTask(task);
-    setIsOpen(true);
-    setNewTask(false);
-  };
-  const handleEdit = (e) => {
+  const handleEdit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text || text === "UPDATE") {
       setInvalid(true);
-      inputRef.current.focus();
+      inputRef.current?.focus();
       return;
     }
     const taskId = task ? task.id : "";
@@ -83,11 +98,8 @@ const TodoForm = ({ handleAddTask, task, onEdit, isOpen, setIsOpen }) => {
   };
 
   return (
-    
     <div className="form_container">
-            <button className="addnewbtn" onClick={addTask}>Add New Task</button>
-
-      
+      <button className="addnewbtn" onClick={addTask}>Add New Task</button>
       <Modal isOpen={isOpen} onClose={closeModal}>
         {newTask ? (
           <form onSubmit={handleSubmit}>
@@ -107,7 +119,6 @@ const TodoForm = ({ handleAddTask, task, onEdit, isOpen, setIsOpen }) => {
                 />
               </div>
             </div>
-            
             <p>Description</p>
             <div className="form_wrapper">
               <div className="form_input_row">
@@ -121,10 +132,8 @@ const TodoForm = ({ handleAddTask, task, onEdit, isOpen, setIsOpen }) => {
             </div>
             <button className="add_btn">{task ? "UPDATE" : "ADD"}</button>
           </form>
-          
         ) : (
           <form onSubmit={handleEdit}>
-            
             <h2>Edit Todo</h2>
             <p>Title</p>
             <div className="form_wrapper">
